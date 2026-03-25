@@ -1,0 +1,34 @@
+### Get a sample PDF
+GET http://localhost:8080/api/mifid/sample
+Accept: application/pdf
+
+### POST a custom statement
+POST http://localhost:8080/api/mifid/statement
+Content-Type: application/json
+
+{
+  "firmName": "Acme Wealth Management Ltd",
+  "firmAddress": "1 Financial Square, London, EC2V 8RT",
+  "firmFcaReference": "FCA Ref: 123456",
+  "clientName": "Jane Smith",
+  "clientReference": "CLI-00123",
+  "clientAddress": "45 Investor Lane, London, SW1A 1AA",
+  "statementDate": "2024-12-31",
+  "periodStart": "2024-01-01",
+  "periodEnd": "2024-12-31",
+  "documentReference": "MIFID-2024-00123",
+  "portfolioName": "Model Portfolio – Balanced Growth",
+  "instrumentName": "Global Equity UCITS ETF",
+  "isin": "IE00B4L5Y983",
+  "investmentAmount": 50000.00,
+  "currency": "GBP",
+  "costLineItems": [
+    { "category": "One-off costs", "description": "Entry costs", "amount": 250.00, "percentage": 0.50, "currency": "GBP" },
+    { "category": "Ongoing costs", "description": "Management fee", "amount": 500.00, "percentage": 1.00, "currency": "GBP" },
+    { "category": "Transaction costs", "description": "Commission", "amount": 75.00, "percentage": 0.15, "currency": "GBP" }
+  ],
+  "totalCostsAmount": 825.00,
+  "totalCostsPercentage": 1.65,
+  "projectedReturnBeforeCosts": 6.50,
+  "projectedReturnAfterCosts": 4.85
+}

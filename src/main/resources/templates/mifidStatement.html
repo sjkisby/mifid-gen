@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Costs and Charges Statement – {statement.documentReference}</title>
+    <style>
+        /* ── Page setup ───────────────────────────────────────────────── */
+        @page {
+            size: A4 portrait;
+            margin: 18mm 15mm 18mm 15mm;
+        }
+        /* ── Base typography ──────────────────────────────────────────── */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            font-size: 9pt;
+            color: #1a1a2e;
+            line-height: 1.5;
+        }
+
+        h1 { font-size: 16pt; color: #003366; margin-bottom: 4pt; }
+        h2 { font-size: 11pt; color: #003366; margin: 14pt 0 6pt; border-bottom: 1.5pt solid #003366; padding-bottom: 3pt; }
+        h3 { font-size: 9pt; color: #555; margin: 10pt 0 4pt; }
+
+        p { margin-bottom: 6pt; }
+
+        /* ── Header ───────────────────────────────────────────────────── */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            border-bottom: 3pt solid #003366;
+            padding-bottom: 10pt;
+            margin-bottom: 16pt;
+        }
+        .firm-name {
+            font-size: 13pt;
+            font-weight: bold;
+            color: #003366;
+        }
+        .firm-meta {
+            font-size: 8pt;
+            color: #555;
+            margin-top: 3pt;
+        }
+        .document-badge {
+            text-align: right;
+            font-size: 8pt;
+            color: #555;
+        }
+        .document-badge .doc-ref {
+            font-size: 9pt;
+            font-weight: bold;
+            color: #003366;
+        }
+
+        /* ── Two-column layout for client / investment blocks ─────────── */
+        .two-col {
+            display: flex;
+            gap: 14pt;
+            margin-bottom: 14pt;
+        }
+        .two-col .col { flex: 1; }
+
+        /* ── Info box ─────────────────────────────────────────────────── */
+        .info-box {
+            background: #f4f7fc;
+            border: 0.5pt solid #c8d8ee;
+            border-radius: 3pt;
+            padding: 8pt 10pt;
+            font-size: 8.5pt;
+        }
+        .info-box .label {
+            font-size: 7.5pt;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 0.3pt;
+            margin-bottom: 1pt;
+        }
+        .info-box .value { font-weight: bold; color: #1a1a2e; }
+
+        .info-row { margin-bottom: 6pt; }
+        .info-row:last-child { margin-bottom: 0; }
+
+        /* ── Regulatory notice banner ─────────────────────────────────── */
+        .notice-banner {
+            background: #fff8e1;
+            border-left: 3pt solid #f9a825;
+            padding: 7pt 10pt;
+            font-size: 8pt;
+            color: #5d4037;
+            margin-bottom: 14pt;
+        }
+        .notice-banner strong { color: #e65100; }
+
+        /* ── Costs table ─────────────────────────────────────────────── */
+        table.costs-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 8.5pt;
+            margin-bottom: 4pt;
+        }
+        .costs-table thead tr {
+            background: #003366;
+            color: white;
+        }
+        .costs-table thead th {
+            padding: 5pt 7pt;
+            text-align: left;
+            font-weight: bold;
+            font-size: 8pt;
+            letter-spacing: 0.2pt;
+        }
+        .costs-table thead th.num { text-align: right; }
+
+        /* Category group header row */
+        .costs-table tr.category-header td {
+            background: #e8eef7;
+            color: #003366;
+            font-weight: bold;
+            font-size: 8pt;
+            padding: 4pt 7pt;
+            border-top: 0.5pt solid #c8d8ee;
+        }
+
+        /* Data rows — alternating shade within each category */
+        .costs-table tr.cost-row td {
+            padding: 4pt 7pt 4pt 14pt;
+            border-bottom: 0.3pt solid #e8e8e8;
+            vertical-align: middle;
+        }
+        .costs-table tr.cost-row:nth-child(even) td {
+            background: #fafbfd;
+        }
+        .costs-table td.num { text-align: right; font-variant-numeric: tabular-nums; }
+        .costs-table td.zero { color: #aaa; }
+
+        /* Totals row */
+        .costs-table tr.totals-row td {
+            background: #003366;
+            color: white;
+            font-weight: bold;
+            padding: 5pt 7pt;
+            border-top: 1pt solid #002244;
+        }
+        .costs-table tr.totals-row td.num { text-align: right; }
+
+        /* ── Effect on return box ─────────────────────────────────────── */
+        .return-box {
+            display: flex;
+            gap: 12pt;
+            margin: 14pt 0;
+        }
+        .return-item {
+            flex: 1;
+            border: 0.5pt solid #c8d8ee;
+            border-radius: 3pt;
+            padding: 8pt 10pt;
+            text-align: center;
+        }
+        .return-item .return-label { font-size: 7.5pt; color: #888; text-transform: uppercase; margin-bottom: 4pt; }
+        .return-item .return-value { font-size: 16pt; font-weight: bold; color: #003366; }
+        .return-item.highlight { background: #f0f4f0; border-color: #4caf50; }
+        .return-item.highlight .return-value { color: #2e7d32; }
+
+        /* ── Disclosure section ───────────────────────────────────────── */
+        .disclosure {
+            font-size: 7.5pt;
+            color: #777;
+            border-top: 0.5pt solid #ddd;
+            padding-top: 8pt;
+            margin-top: 12pt;
+            line-height: 1.4;
+        }
+
+        /* ── Page break hints ─────────────────────────────────────────── */
+        .no-break { page-break-inside: avoid; }
+        .page-break { page-break-before: always; }
+    </style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════
+     HEADER
+══════════════════════════════════════════════════ -->
+<div class="header">
+    <div>
+        <div class="firm-name">{statement.firmName}</div>
+        <div class="firm-meta">{statement.firmAddress}</div>
+        <div class="firm-meta">{statement.firmFcaReference}</div>
+    </div>
+    <div class="document-badge">
+        <div style="font-size:11pt; font-weight:bold; color:#003366; margin-bottom:4pt;">
+            Costs and Charges Statement
+        </div>
+        <div>Statement date: <strong>{statement.statementDate}</strong></div>
+        <div>Reference: <span class="doc-ref">{statement.documentReference}</span></div>
+        <div>Period: {statement.periodStart} – {statement.periodEnd}</div>
+    </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     REGULATORY NOTICE
+══════════════════════════════════════════════════ -->
+<div class="notice-banner">
+    <strong>MiFID II / MiFIR Disclosure — Article 24(4) &amp; Delegated Regulation (EU) 2017/565.</strong>
+    This document sets out all costs and charges associated with the investment service and financial instrument
+    described below for the period shown. All amounts are in {statement.currency} unless otherwise stated.
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     CLIENT / INVESTMENT DETAILS
+══════════════════════════════════════════════════ -->
+<div class="two-col no-break">
+    <div class="col">
+        <h2>Client Details</h2>
+        <div class="info-box">
+            <div class="info-row">
+                <div class="label">Client Name</div>
+                <div class="value">{statement.clientName}</div>
+            </div>
+            <div class="info-row">
+                <div class="label">Client Reference</div>
+                <div class="value">{statement.clientReference}</div>
+            </div>
+            <div class="info-row">
+                <div class="label">Address</div>
+                <div class="value">{statement.clientAddress}</div>
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <h2>Investment Details</h2>
+        <div class="info-box">
+            <div class="info-row">
+                <div class="label">Portfolio / Service</div>
+                <div class="value">{statement.portfolioName}</div>
+            </div>
+            <div class="info-row">
+                <div class="label">Instrument</div>
+                <div class="value">{statement.instrumentName}</div>
+            </div>
+            <div class="info-row">
+                <div class="label">ISIN</div>
+                <div class="value">{statement.isin}</div>
+            </div>
+            <div class="info-row">
+                <div class="label">Investment Amount</div>
+                <div class="value">{statement.formattedInvestmentAmount}</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     COSTS & CHARGES BREAKDOWN TABLE
+     (variable rows — exactly what image overlay can't do)
+══════════════════════════════════════════════════ -->
+<h2>Costs and Charges Breakdown</h2>
+
+<table class="costs-table">
+    <thead>
+        <tr>
+            <th style="width:50%">Cost Description</th>
+            <th class="num" style="width:25%">Amount ({statement.currency})</th>
+            <th class="num" style="width:25%">% of Investment</th>
+        </tr>
+    </thead>
+    <tbody>
+        {#for item in statement.costLineItems}
+            {! Emit a category header row whenever the category changes !}
+            {#if item_index == 0 || statement.costLineItems.get(item_index - 1).category != item.category}
+            <tr class="category-header">
+                <td colspan="3">{item.category}</td>
+            </tr>
+            {/if}
+            <tr class="cost-row">
+                <td>{item.description}</td>
+                <td class="num {#if item.isZero}zero{/if}">
+                    {item.formattedAmount}
+                </td>
+                <td class="num {#if item.isZeroPercentage}zero{/if}">
+                    {item.formattedPercentage}
+                </td>
+            </tr>
+        {/for}
+
+        <!-- Totals row -->
+        <tr class="totals-row">
+            <td>Total Costs and Charges</td>
+            <td class="num">{statement.formattedTotalCosts}</td>
+            <td class="num">{statement.formattedTotalCostsPercentage}</td>
+        </tr>
+    </tbody>
+</table>
+
+<!-- ══════════════════════════════════════════════════
+     EFFECT ON RETURN
+══════════════════════════════════════════════════ -->
+<h2>Effect on Return</h2>
+<p style="font-size:8pt; color:#555; margin-bottom:8pt;">
+    The table below shows how costs affect your projected annual return based on the investment amount above.
+</p>
+
+<div class="return-box no-break">
+    <div class="return-item">
+        <div class="return-label">Gross Return (before costs)</div>
+        <div class="return-value">{statement.projectedReturnBeforeCosts}%</div>
+    </div>
+    <div class="return-item">
+        <div class="return-label">Total Costs and Charges</div>
+        <div class="return-value" style="color:#c62828;">{statement.formattedTotalCostsPercentage}</div>
+    </div>
+    <div class="return-item highlight">
+        <div class="return-label">Net Return (after all costs)</div>
+        <div class="return-value">{statement.projectedReturnAfterCosts}%</div>
+    </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     REGULATORY DISCLOSURES
+══════════════════════════════════════════════════ -->
+<div class="disclosure no-break">
+    <p>
+        <strong>Important information:</strong> Past performance is not a reliable indicator of future results.
+        The costs and charges shown are estimates based on information available at the time of preparation and
+        may vary. Where costs are shown as zero, this reflects that no such charge applies to your investment
+        under current terms.
+    </p>
+    <p>
+        {statement.firmName} is authorised and regulated by the Financial Conduct Authority ({statement.firmFcaReference}).
+        Registered in England and Wales. This document has been prepared in accordance with the requirements of
+        MiFID II and the UK Markets in Financial Instruments Regulations 2017 (SI 2017/701).
+    </p>
+    <p>
+        If you have any questions regarding this statement, please contact your adviser or call our client
+        services team. You have the right to request further information about the basis of any cost or charge
+        shown in this statement.
+    </p>
+</div>
+<!-- ══════════════════════════════════════════════════
+     FOOTER (replaces @page margin boxes)
+══════════════════════════════════════════════════ -->
+<div style="
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    border-top: 0.5pt solid #ddd;
+    padding: 4pt 0 2pt;
+    font-size: 7.5pt;
+    color: #888;
+    display: flex;
+    justify-content: space-between;
+">
+    <span>Document ref: {statement.documentReference}</span>
+    <span>Page <span class="pagenumber"/> of <span class="pagecount"/></span>
+    <span>CONFIDENTIAL</span>
+</div>
+</body>
+</html>
